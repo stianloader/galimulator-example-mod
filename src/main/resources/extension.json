@@ -1,0 +1,8 @@
+{
+  "entrypoint": "example.extension.ExampleExtension",
+  "name": "ExampleExtension",
+  "version": "0.0.1-SNAPSHOT",
+  "dependencies": [
+    "StarloaderAPI"
+  ]
+}
