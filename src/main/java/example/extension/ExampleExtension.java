@@ -1,5 +1,6 @@
 package example.extension;
 
+import de.geolykt.starloader.api.event.EventManager;
 import de.geolykt.starloader.mod.Extension;
 
 public class ExampleExtension extends Extension {
@@ -7,6 +8,7 @@ public class ExampleExtension extends Extension {
     @Override
     public void initialize() {
         getLogger().info("Hello from the example plugin!");
+        EventManager.registerListener(new ExampleListener());
     }
 
     @Override
