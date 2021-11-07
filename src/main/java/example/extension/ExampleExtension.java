@@ -13,7 +13,7 @@ public class ExampleExtension extends Extension {
 
     @Override
     public void terminate() {
-        // Please be very careful when implementing the terminate function
+        // Please be very careful when implementing the terminate method
         // If you are not careful and a deadlock occurs, then the VM might deadlock too
         // As such, do not rely on any other threads in the terminate function and code everything async-safe
     }
