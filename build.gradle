@@ -1,0 +1,93 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'gsl-starplane' version '0.1.0-a20240228'
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+}
+
+// Groups are often named like packages. For the conventions of naming conventions are follows:
+// https://docs.oracle.com/javase/tutorial/java/package/namingpkgs.html
+group 'com.example'
+version '0.0.1-SNAPSHOT'
+
+// The following statement defines that Java 8 should be used (which is galimulator's runtime version),
+// however if you dare, you can bump the version - just beware that users may lack the knowledge in how to install and run
+// your mod in that case.
+targetCompatibility = compileJava.targetCompatibility = sourceCompatibility = compileJava.sourceCompatibility = '1.8'
+
+repositories {
+    mavenLocal()
+    // stianloader's maven repository, which is the repo where SLAPI and SLL are contianed in (among other stianloader toolchain stuff)
+    maven {
+        name 'stianloader-maven'
+        url 'https://stianloader.org/maven'
+    }
+    mavenCentral()
+}
+
+// See the gslStarplane documentation on how to use the starplane block in more detail.
+// As of now the documentation is mostly stored in its README file, but the documentation is still very comprehensive.
+starplane {
+    // Hint: RAS is very powerful. Use with care. Mixins are almost always more appropriate.
+    // Reversible access wideners can be declared like below:
+    // withRAS(rootProject.file("src/main/resources/example-mod.ras"))
+
+    // If you wish, you can define a directory in which eclipse external annotations (EEA) are contained in.
+    // However, this is a feature that is very rarely used, but it's there
+    // eclipseEEA = rootProject.file("src/eclipse-eea")
+}
+
+runMods {
+    from shadowJar
+}
+
+configurations {
+    dependencyMods
+    compileOnlyApi.extendsFrom(dependencyMods)
+    compileOnlyApi.extendsFrom(devRuntime)
+    compileOnlyApi.extendsFrom(galimulatorDependencies)
+}
+
+deployMods {
+    from configurations["dependencyMods"]
+}
+
+dependencies {
+    // The versions of SLAPI are listed here: https://stianloader.org/maven/de/geolykt/starloader-api/
+    dependencyMods("de.geolykt:starloader-api:2.0.0-a20240227")
+    // The versions of launcher-micromixin are listed here: https://stianloader.org/maven/org/stianloader/launcher-micromixin/
+    devRuntime "org.stianloader:launcher-micromixin:4.0.0-a20240227"
+    compileOnly "org.stianloader:micromixin-annotations:0.4.0-a20240227"
+    compileOnly "de.geolykt.starloader:starplane-annotations:1.0.0"
+    compileOnlyApi "org.jetbrains:annotations:24.1.0"
+
+    // Including external libraries (in below case, the tenpatch library) is done like below:
+    // Unlike most minecraft mod loaders, the stianloader tooling does not support jar-in-jars.
+    // Instead the dependencies must be shaded in traditionally either through bog standard copying of source files
+    // or via the gradle shadow plugin. Note: It might be useful to relocate dependencies, which is not done
+    // in this example. Not doing so might cause different mods to be incompatible with each other, although
+    // SLL classloading shouldn't instantly blow up if two independent mods shade in the same dependency for as long
+    // as they do not depend on each other.
+    /*
+    implementation('com.github.raeleus.TenPatch:tenpatch:5.2.3') {
+        exclude group: 'com.badlogicgames.gdx', module: 'gdx'
+    }
+    */
+}
+
+remapJar {
+    archiveClassifier = 'remapped'
+    fromJar shadowJar
+}
+
+build {
+    dependsOn remapJar
+}
+
+// The below block is only really needed when shading in external dependencies, see
+// https://github.com/Starloader-project/GslStarplane/tree/6a3c5e0e190fb948badac89469012e2a172fcb90?tab=readme-ov-file#dealing-with-shaded-dependencies
+// However, having this block generally doesn't hurt for as long as you are aware of
+// the differences of api/implementation and compileOnlyApi/compileOnly.
+genEclipseRuns {
+    additionalRuntimeDependency("main", configurations["runtimeClasspath"])
+}
