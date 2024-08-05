@@ -1,8 +1,10 @@
 plugins {
     id 'java'
     id 'java-library'
-    id 'gsl-starplane' version '0.1.0-a20240228'
-    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id 'gsl-starplane' version '0.2.0-a20240601'
+    // Note: The shadow plugin has moved to the gradleup organisation, meaning that future updates are expected there.
+    // So far I couldn't locate these releases though.
+    id 'io.github.goooler.shadow' version '8.1.8'
 }
 
 // Groups are often named like packages. For the conventions of naming conventions are follows:
@@ -13,16 +15,16 @@ version '0.0.1-SNAPSHOT'
 // The following statement defines that Java 8 should be used (which is galimulator's runtime version),
 // however if you dare, you can bump the version - just beware that users may lack the knowledge in how to install and run
 // your mod in that case.
-targetCompatibility = compileJava.targetCompatibility = sourceCompatibility = compileJava.sourceCompatibility = '1.8'
+java.targetCompatibility = compileJava.targetCompatibility = java.sourceCompatibility = compileJava.sourceCompatibility = '1.8'
 
 repositories {
-    mavenLocal()
-    // stianloader's maven repository, which is the repo where SLAPI and SLL are contianed in (among other stianloader toolchain stuff)
+    // stianloader's maven repository, which is the repo where SLAPI and SLL are contained in (among other stianloader toolchain stuff)
     maven {
         name 'stianloader-maven'
         url 'https://stianloader.org/maven'
     }
     mavenCentral()
+    mavenLocal()
 }
 
 // See the gslStarplane documentation on how to use the starplane block in more detail.
@@ -54,10 +56,10 @@ deployMods {
 
 dependencies {
     // The versions of SLAPI are listed here: https://stianloader.org/maven/de/geolykt/starloader-api/
-    dependencyMods("de.geolykt:starloader-api:2.0.0-a20240227")
+    dependencyMods("de.geolykt:starloader-api:2.0.0-a20240728.1")
     // The versions of launcher-micromixin are listed here: https://stianloader.org/maven/org/stianloader/launcher-micromixin/
-    devRuntime "org.stianloader:launcher-micromixin:4.0.0-a20240227"
-    compileOnly "org.stianloader:micromixin-annotations:0.4.0-a20240227"
+    devRuntime "org.stianloader:launcher-micromixin:4.0.0-a20240731"
+    compileOnly "org.stianloader:micromixin-annotations:0.6.2-a20240731"
     compileOnly "de.geolykt.starloader:starplane-annotations:1.0.0"
     compileOnlyApi "org.jetbrains:annotations:24.1.0"
 
@@ -85,7 +87,7 @@ build {
 }
 
 // The below block is only really needed when shading in external dependencies, see
-// https://github.com/Starloader-project/GslStarplane/tree/6a3c5e0e190fb948badac89469012e2a172fcb90?tab=readme-ov-file#dealing-with-shaded-dependencies
+// https://github.com/stianloader/GslStarplane/tree/6a3c5e0e190fb948badac89469012e2a172fcb90?tab=readme-ov-file#dealing-with-shaded-dependencies
 // However, having this block generally doesn't hurt for as long as you are aware of
 // the differences of api/implementation and compileOnlyApi/compileOnly.
 genEclipseRuns {
