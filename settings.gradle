@@ -8,14 +8,14 @@ pluginManagement {
             url = 'https://stianloader.org/maven/'
         }
         maven {
-            name 'fabric'
-            url 'https://maven.fabricmc.net/'
+            name = 'fabric'
+            url = 'https://maven.fabricmc.net/'
         }
     }
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 rootProject.name = 'galimulator-example-mod'
